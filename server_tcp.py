@@ -11,8 +11,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         conn, addr = s.accept()
         print(f"Client {addr[0]}:{addr[1]} has connected")
         with conn:
-            while True:
-                data = conn.recv(1024)
-                if not data:
-                    break
-                conn.sendall(data)
+            data = conn.recv(1024)
+            if data:
+                print(f"Client {addr[0]}:{addr[1]} sent: {data}")
