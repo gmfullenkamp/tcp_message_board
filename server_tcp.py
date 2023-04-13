@@ -59,30 +59,27 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             else:
                 # Receive data from the client
                 message = notified_socket.recv(1024)
-                print(message)
-                    
-                # If the client has disconnected, remove the socket from the list and the dictionary
-                if not message:
-                    print(f'Client disconnected: {clients[notified_socket][0]}:{clients[notified_socket][1]}')
-                    sockets_list.remove(notified_socket)
-                    del clients[notified_socket]
-                    continue
 
                 # If the client has sent a message, print it and send it to all connected clients
-                print(f'Received message from {clients[notified_socket][0]}:{clients[notified_socket][1]}: '
+                print(f'Received command from {clients[notified_socket][0]}:{clients[notified_socket][1]}: '
                       f'{message.decode()}')
-                notified_socket.sendall(b'OK')
-                for client_socket in clients:
-                    if client_socket != server_socket and client_socket != notified_socket:
-                        client_socket.send(message)
 
                 # If first time user has connected, get username and port number to update User object and userList
                 if first:
                     user_list.append(User(message.decode(), clients[notified_socket][1]))
                     print(user_list[-1].name, user_list[-1].port_number)
                     first = False
-
-        # Handle sockets that have exceptions (e.g. a client has disconnected unexpectedly)
-        for notified_socket in exception_sockets:
-            sockets_list.remove(notified_socket)
-            del clients[notified_socket]
+                    notified_socket.sendall(message + b' is connected.')
+                elif b'%exit' == message.split(b' ')[0]:  # Exit command removes the client
+                    print(f'Client exiting: {clients[notified_socket][0]}:{clients[notified_socket][1]}')
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            break
+                    user_list.remove(user)
+                    notified_socket.sendall(b'Disconnected from server.')
+                    sockets_list.remove(notified_socket)
+                    del clients[notified_socket]
+                    continue
+                else:  # TODO: Remove else in future.
+                    notified_socket.sendall(message)
+        print("User list:", user_list)
