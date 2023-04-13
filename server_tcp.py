@@ -62,12 +62,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
 
                 # If the client has sent a message, print it and send it to all connected clients
                 print(f'Received message from {clients[notified_socket][0]}:{clients[notified_socket][1]}: {message.decode()}')
+                notified_socket.sendall(b'OK')
                 for client_socket in clients:
                     if client_socket != server_socket and client_socket != notified_socket:
-                        
                         client_socket.send(message)
-
-                        
 
         # Handle sockets that have exceptions (e.g. a client has disconnected unexpectedly)
         for notified_socket in exception_sockets:
