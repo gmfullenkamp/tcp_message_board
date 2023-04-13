@@ -1,5 +1,7 @@
 import socket
 import select
+import socket
+import select
 
 HOST = 'localhost'
 PORT = 8888
@@ -13,10 +15,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
     clients = {}
 
     while True:
-        read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
+        read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list, 0)
 
         for notified_socket in read_sockets:
-            # TODO: Fix to allow multiple clients to send/recieve simultaneously
             if notified_socket == server_socket:
                 client_socket, client_address = server_socket.accept()
                 print(f'New client connected: {client_address[0]}:{client_address[1]}')
@@ -33,3 +34,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 for client_socket in clients:
                     if client_socket != server_socket and client_socket != notified_socket:
                         client_socket.send(message)
+
+        for notified_socket in exception_sockets:
+            sockets_list.remove(notified_socket)
+            del clients[notified_socket]
