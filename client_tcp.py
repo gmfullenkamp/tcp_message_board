@@ -9,11 +9,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         connect_command = input()
         if "%connect " in connect_command:
             host_addr, username = connect_command.split(" ")[1:3]
-            print(f"Connecting to {host_addr}...")
+            print(f"Connecting to {host_addr} as user {username}...")
             host, port = host_addr.split(":")
             # Connect the client to the server
             s.connect((host, int(port)))
-            break  # TODO: Send the username to the server for this specific client socket port
+            # Allow the user to input any command/message whenever they want
+            s.sendall(username.encode('utf-8'))
+            break
         else:
             print("Try again.")  # TODO: Error Handling
 
