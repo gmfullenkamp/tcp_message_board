@@ -2,12 +2,12 @@ import socket
 import select
 
 HOST = 'localhost'  # the server's hostname or IP address
-PORT = 8888        # the port used by the server
-
+PORT = 8888         # the port used by the server
 
 groupList = []
 
 userList = []
+
 
 class Group:
     def __init__(self, name):
@@ -15,11 +15,13 @@ class Group:
         self.users = []
         self.recent = []
 
+
 class User:
-    def __init__(self, username, portNumber):
+    def __init__(self, username, port_number):
         self.username = username
-        self.portNumber = portNumber
+        self.port_number = port_number
         self.group = None
+
 
 publicGroup = Group("public")
 
@@ -61,7 +63,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     continue
 
                 # If the client has sent a message, print it and send it to all connected clients
-                print(f'Received message from {clients[notified_socket][0]}:{clients[notified_socket][1]}: {message.decode()}')
+                print(f'Received message from {clients[notified_socket][0]}:{clients[notified_socket][1]}: '
+                      f'{message.decode()}')
                 notified_socket.sendall(b'OK')
                 for client_socket in clients:
                     if client_socket != server_socket and client_socket != notified_socket:
