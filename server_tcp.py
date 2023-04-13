@@ -4,6 +4,25 @@ import select
 HOST = 'localhost'  # the server's hostname or IP address
 PORT = 8888        # the port used by the server
 
+
+groupList = []
+
+userList = []
+
+class Group:
+    def __init__(self, name):
+        self.name = name
+        self.users = []
+        self.recent = []
+
+class User:
+    def __init__(self, username, portNumber):
+        self.username = username
+        self.portNumber = portNumber
+        self.group = None
+
+publicGroup = Group("public")
+
 # Create the server socket and bind it to the specified host and port
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -45,7 +64,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 print(f'Received message from {clients[notified_socket][0]}:{clients[notified_socket][1]}: {message.decode()}')
                 for client_socket in clients:
                     if client_socket != server_socket and client_socket != notified_socket:
+                        
                         client_socket.send(message)
+
+                        
 
         # Handle sockets that have exceptions (e.g. a client has disconnected unexpectedly)
         for notified_socket in exception_sockets:
