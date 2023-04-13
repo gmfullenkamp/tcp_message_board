@@ -4,9 +4,9 @@ import select
 HOST = 'localhost'  # the server's hostname or IP address
 PORT = 8888         # the port used by the server
 
-groupList = []
+group_list = []
 
-userList = []
+user_list = []
 
 
 class Group:
@@ -17,8 +17,8 @@ class Group:
 
 
 class User:
-    def __init__(self, username, port_number):
-        self.username = username
+    def __init__(self, name, port_number):
+        self.name = name
         self.port_number = port_number
         self.group = None
 
@@ -53,7 +53,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 sockets_list.append(client_socket)
                 clients[client_socket] = client_address
 
-                #boolean to mark user's first connection to create user object from entered username
+                # Boolean to mark user's first connection to create user object from entered username
                 first = True
 
             else:
@@ -76,10 +76,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     if client_socket != server_socket and client_socket != notified_socket:
                         client_socket.send(message)
 
-                #if first time user has connect get username and port number to update User object and userList
+                # If first time user has connected, get username and port number to update User object and userList
                 if first:
-                    userList.append(User(message.decode(), clients[notified_socket][1]))
-                    print(userList[-1].username, userList[-1].portNumber)
+                    user_list.append(User(message.decode(), clients[notified_socket][1]))
+                    print(user_list[-1].name, user_list[-1].port_number)
                     first = False
 
         # Handle sockets that have exceptions (e.g. a client has disconnected unexpectedly)
