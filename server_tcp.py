@@ -36,6 +36,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
 
     # Wait for incoming connections and handle data from clients
     while True:
+        
         # Use select.select() to wait for I/O events on the sockets
         read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list, 0)
 
@@ -49,10 +50,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 # Add the client socket to the list of sockets to listen on and the clients dictionary
                 sockets_list.append(client_socket)
                 clients[client_socket] = client_address
+
+                #boolean to mark user's first connection to create user object from entered username
+                first = True
+
             else:
                 # Receive data from the client
                 message = notified_socket.recv(1024)
-
+                print(message)
+                    
                 # If the client has disconnected, remove the socket from the list and the dictionary
                 if not message:
                     print(f'Client disconnected: {clients[notified_socket][0]}:{clients[notified_socket][1]}')
@@ -66,6 +72,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 for client_socket in clients:
                     if client_socket != server_socket and client_socket != notified_socket:
                         client_socket.send(message)
+
+                #if first time user has connect get username and port number to update User object and userList
+                if first:
+                    userList.append(User(message.decode(), clients[notified_socket][1]))
+                    print(userList[-1].username, userList[-1].portNumber)
+                    first = False
 
         # Handle sockets that have exceptions (e.g. a client has disconnected unexpectedly)
         for notified_socket in exception_sockets:
