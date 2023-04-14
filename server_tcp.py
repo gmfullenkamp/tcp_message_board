@@ -80,6 +80,27 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     sockets_list.remove(notified_socket)
                     del clients[notified_socket]
                     continue
+                elif b'%join' == message.split(b' ')[0]:  # TODO: Join command
+                    notified_socket.sendall(b'%join command is not implemented.')
+                elif b'%post' == message.split(b' ')[0]:  # TODO: Post command
+                    notified_socket.sendall(b'%post command is not implemented.')
+                elif b'%users' == message.split(b' ')[0]:  # TODO: Users command
+                    notified_socket.sendall(b'%users command is not implemented.')
+                elif b'%leave' == message.split(b' ')[0]:  # TODO: Leave command
+                    notified_socket.sendall(b'%leave command is not implemented.')
+                elif b'%message' == message.split(b' ')[0]:  # TODO: Message command
+                    notified_socket.sendall(b'%message command is not implemented.')
+                elif b'%groups' == message.split(b' ')[0]:  # TODO: Groups command
+                    notified_socket.sendall(b'%groups command is not implemented.')
+                elif b'%groupjoin' == message.split(b' ')[0]:  # TODO: Groupjoin command
+                    notified_socket.sendall(b'%groupjoin command is not implemented.')
+                elif b'%grouppost' == message.split(b' ')[0]:  # TODO: Grouppost command
+                    notified_socket.sendall(b'%grouppost command is not implemented.')
+                elif b'%groupusers' == message.split(b' ')[0]:  # TODO: Groupusers command
+                    notified_socket.sendall(b'%groupusers command is not implemented.')
+                elif b'%groupleave' == message.split(b' ')[0]:  # TODO: Groupleave command
+                    notified_socket.sendall(b'%groupleave command is not implemented.')
+                elif b'%groupmessage' == message.split(b' ')[0]:  # TODO: Groupmessage command
+                    notified_socket.sendall(b'%groupmessage command is not implemented.')
                 else:  # TODO: Remove else in future.
                     notified_socket.sendall(message)
-        print("User list:", user_list)
