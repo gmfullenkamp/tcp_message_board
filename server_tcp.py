@@ -24,6 +24,16 @@ class User:
 
 
 publicGroup = Group("public")
+grantGroup = Group("grant")
+trevorGroup = Group("trevor")
+pythonGroup = Group("python")
+cppGroup = Group("cpp")
+
+group_list.append(publicGroup)
+group_list.append(grantGroup)
+group_list.append(trevorGroup)
+group_list.append(pythonGroup)
+group_list.append(cppGroup)
 
 # Create the server socket and bind it to the specified host and port
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
@@ -70,6 +80,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     print(user_list[-1].name, user_list[-1].port_number)
                     first = False
                     notified_socket.sendall(message + b' is connected.')
+                    
                 elif b'%exit' == message.split(b' ')[0]:  # Exit command removes the client
                     print(f'Client exiting: {clients[notified_socket][0]}:{clients[notified_socket][1]}')
                     for user in user_list:
@@ -80,27 +91,105 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     sockets_list.remove(notified_socket)
                     del clients[notified_socket]
                     continue
-                elif b'%join' == message.split(b' ')[0]:  # TODO: Join command
-                    notified_socket.sendall(b'%join command is not implemented.')
+                
+                elif b'%join' == message.split(b' ')[0]:
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            # Error handling implemented if user is already in public
+                            if user.group != 'public':
+                                group_list[0].users.append(user)
+                                user.group = 'public'
+                                break
+                            else:
+                                notified_socket.sendall(b'User is already in public')
+                                continue
+                            
+                    notified_socket.sendall(b'User added to public')
+                    continue
+                
                 elif b'%post' == message.split(b' ')[0]:  # TODO: Post command
                     notified_socket.sendall(b'%post command is not implemented.')
-                elif b'%users' == message.split(b' ')[0]:  # TODO: Users command
-                    notified_socket.sendall(b'%users command is not implemented.')
-                elif b'%leave' == message.split(b' ')[0]:  # TODO: Leave command
-                    notified_socket.sendall(b'%leave command is not implemented.')
+                    
+                elif b'%users' == message.split(b' ')[0]:
+                    send_string = 'List of connected users: \n'
+                    for user in user_list:
+                        send_string += user.name + '\n'
+                    notified_socket.sendall(send_string.encode())
+                    continue
+                
+                elif b'%leave' == message.split(b' ')[0]:
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            # Error handling implemented if user is not in public
+                            if user.group == 'public':
+                                group_list[0].users.remove(user)
+                                user.group = None
+                                break
+                            else:
+                                notified_socket.sendall(b'User is not in public')
+                                continue
+                    notified_socket.sendall(b'User removed from public')
+                    continue
+                
                 elif b'%message' == message.split(b' ')[0]:  # TODO: Message command
                     notified_socket.sendall(b'%message command is not implemented.')
-                elif b'%groups' == message.split(b' ')[0]:  # TODO: Groups command
-                    notified_socket.sendall(b'%groups command is not implemented.')
-                elif b'%groupjoin' == message.split(b' ')[0]:  # TODO: Groupjoin command
-                    notified_socket.sendall(b'%groupjoin command is not implemented.')
+                    
+                elif b'%groups' == message.split(b' ')[0]:
+                    send_string = 'List of groups: \n'
+                    for group in group_list:
+                        send_string += group.name + '\n'
+                    notified_socket.sendall(send_string.encode())
+                    continue
+                
+                elif b'%groupjoin' == message.split(b' ')[0]:
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            for group in group_list:
+                                if message.split(b' ')[1].decode() == group.name:
+                                    # Error handling implemented for if user is already in requested group
+                                    if user.group != group.name:
+                                        group.users.append(user)
+                                        user.group = group.name
+                                        break
+                                    else:
+                                        print(group.users)
+                                        notified_socket.sendall(b'User is already in ' + group.name.encode())
+                                        continue
+                                    
+                    notified_socket.sendall(b'User added to ' + group.name.encode())
+                    continue
+                
                 elif b'%grouppost' == message.split(b' ')[0]:  # TODO: Grouppost command
                     notified_socket.sendall(b'%grouppost command is not implemented.')
-                elif b'%groupusers' == message.split(b' ')[0]:  # TODO: Groupusers command
-                    notified_socket.sendall(b'%groupusers command is not implemented.')
-                elif b'%groupleave' == message.split(b' ')[0]:  # TODO: Groupleave command
-                    notified_socket.sendall(b'%groupleave command is not implemented.')
+                    
+                elif b'%groupusers' == message.split(b' ')[0]:
+                    send_string = 'List of users in ' + message.split(b' ')[1].decode() + ':\n'
+                    for group in group_list:
+                        if message.split(b' ')[1].decode() == group.name:
+                            for user in group.users:
+                                send_string += user.name + '\n'
+                    notified_socket.sendall(send_string.encode())
+                    continue
+                    
+                elif b'%groupleave' == message.split(b' ')[0]:
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            for group in group_list:
+                                if message.split(b' ')[1].decode() == group.name:
+                                    # Error handling implemented for if user is not in requested group
+                                    if user.group == group.name:
+                                        group.users.remove(user)
+                                        user.group = None
+                                        break
+                                    else:
+                                        notified_socket.sendall(b'User is not in ' + group.name.encode())
+                                        continue
+                                    
+                    notified_socket.sendall(b'User removed from ' + group.name.encode())
+                    continue
+                
                 elif b'%groupmessage' == message.split(b' ')[0]:  # TODO: Groupmessage command
                     notified_socket.sendall(b'%groupmessage command is not implemented.')
-                else:  # TODO: Remove else in future.
+                    
+                else:  # TODO: Make else error handling, possible print all commands and functions?
                     notified_socket.sendall(message)
