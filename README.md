@@ -1,3 +1,4 @@
+Created by: Grant Fullenkamp and Trevor Darst
 # tcp_message_board
 ## Running the Server
 1. To run the server, be sure to have Python 3.10 installed on your local machine.
