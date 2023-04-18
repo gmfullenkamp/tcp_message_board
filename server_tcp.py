@@ -1,5 +1,6 @@
 import socket
 import select
+from datetime import datetime
 
 HOST = 'localhost'  # the server's hostname or IP address
 PORT = 8888         # the port used by the server
@@ -13,7 +14,7 @@ class Group:
     def __init__(self, name):
         self.name = name
         self.users = []
-        self.recent = []
+        self.messages = []
 
 
 class User:
@@ -108,7 +109,23 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     continue
                 
                 elif b'%post' == message.split(b' ')[0]:  # TODO: Post command
-                    notified_socket.sendall(b'%post command is not implemented.')
+                    subject = message.split(b' ')[1]
+                    post_message = message.split(b"'")[1]
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            user_group_str = user.group
+                    for group in group_list:
+                        if group.name == user_group_str:
+                            break
+                    group.messages.append({"username": user.name,
+                                           "time": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+                                           "subject": subject.decode(), "message": post_message.decode()})
+                    # TODO: Send the new post to all users in this group
+                    notified_socket.sendall(f"Username: {user.name}\n"
+                                            f"Time: {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}\n"
+                                            f"Message ID: {len(group.messages) - 1}\n"
+                                            f"Subject: {subject}\n"
+                                            f"Message: {post_message}\n".encode())
                     
                 elif b'%users' == message.split(b' ')[0]:
                     send_string = 'List of connected users: \n'
@@ -131,8 +148,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     notified_socket.sendall(b'User removed from public')
                     continue
                 
-                elif b'%message' == message.split(b' ')[0]:  # TODO: Message command
-                    notified_socket.sendall(b'%message command is not implemented.')
+                elif b'%message' == message.split(b' ')[0]:
+                    index = int(message.split(b' ')[1].decode())
+                    message_data = group_list[0].messages[index]
+                    notified_socket.sendall(f"Username: {message_data['username']}\n"
+                                            f"Time: {message_data['time']}\n"
+                                            f"Message ID: {index}\n"
+                                            f"Subject: {message_data['subject']}\n"
+                                            f"Message: {message_data['message']}\n".encode())
                     
                 elif b'%groups' == message.split(b' ')[0]:
                     send_string = 'List of groups: \n'
@@ -160,7 +183,25 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     continue
                 
                 elif b'%grouppost' == message.split(b' ')[0]:  # TODO: Grouppost command
-                    notified_socket.sendall(b'%grouppost command is not implemented.')
+                    user_group_str = message.split(b' ')[1].decode()
+                    subject = message.split(b' ')[2].decode()
+                    post_message = message.split(b"'")[1].decode()
+                    for user in user_list:
+                        if user.port_number == clients[notified_socket][1]:
+                            break
+                    for group in group_list:
+                        if group.name == user_group_str:
+                            break
+                    print(group.name)
+                    group.messages.append({"username": user.name,
+                                           "time": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+                                           "subject": subject, "message": post_message})
+                    # TODO: Send the new post to all users in this group
+                    notified_socket.sendall(f"Username: {user.name}\n"
+                                            f"Time: {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}\n"
+                                            f"Message ID: {len(group.messages) - 1}\n"
+                                            f"Subject: {subject}\n"
+                                            f"Message: {post_message}\n".encode())
                     
                 elif b'%groupusers' == message.split(b' ')[0]:
                     send_string = 'List of users in ' + message.split(b' ')[1].decode() + ':\n'
@@ -188,8 +229,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     notified_socket.sendall(b'User removed from ' + group.name.encode())
                     continue
                 
-                elif b'%groupmessage' == message.split(b' ')[0]:  # TODO: Groupmessage command
-                    notified_socket.sendall(b'%groupmessage command is not implemented.')
+                elif b'%groupmessage' == message.split(b' ')[0]:
+                    user_group_str = message.split(b' ')[1].decode()
+                    index = int(message.split(b' ')[2].decode())
+                    for group in group_list:
+                        if group.name == user_group_str:
+                            break
+                    print(group.messages)
+                    message_data = group.messages[index]
+                    notified_socket.sendall(f"Username: {message_data['username']}\n"
+                                            f"Time: {message_data['time']}\n"
+                                            f"Message ID: {index}\n"
+                                            f"Subject: {message_data['subject']}\n"
+                                            f"Message: {message_data['message']}\n".encode())
                     
                 else:  # TODO: Make else error handling, possible print all commands and functions?
                     notified_socket.sendall(message)
