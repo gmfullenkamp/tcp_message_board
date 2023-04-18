@@ -1,19 +1,37 @@
 # tcp_message_board
-## TODOs Part 1:
-1. Update the server to send messages and the client to listen to messages. (DONE)
-2. Make sure that the client is constantly listening for the server responses. (DONE)
-3. Add the commands for the client and the ability for the server to parse them out. 
-4. Implement the %connect command with an input for the "localhost:8888" server address and port, and a username input. (DONE)
-4.1 Update the server to connect the address and port with the username and add it to the list of users. (DONE)
-5. Implement the %exit command to allow the user to exit from the server from the %connect command. (DONE)
-6. Implement the %join command to allow the user to join the public board.
-7. Update the server message board with a "username joined the chat" to allow other users to see a new join.
-8. Update the server to send the message board (updated) to the user after they join.
-9. Implement the %post command to allow the user to post messages to the public board.
-10. Update the server to send the message board (updated) to the user after any post is made to the public board.
-11. Implement the %users command to allow the user to see all other users connected to the public board.
-12. Implement the %leave command to allow the user to leave the public board.
-13. Update the server message board with a "username left the chat" to allow other users to see leaving peoples.
-14. Implement the %message ID command to allow the user to output a specific message from the public board.
-## TODOs Part 2:
-1. Do these TODOs.
+## Running the Server
+1. To run the server, be sure to have Python 3.10 installed on your local machine.
+2. Next, open a command terminal.
+3. Navigate to the directory where the server_tcp.py file is located.
+4. Run the command 'python server_tcp.py'.
+
+Notes:
+- The server is ran on the host address localhost and the port 8888 (localhost:8888).
+- You may need to turn off your firewall in order for the client to correctly communicate with the server.
+## Running a client
+1. To run the client, be sure to have Python 3.10 installed on your local machine.
+2. Next, open a command terminal.
+3. Navigate to the directory where the server_tcp.py file is located.
+4. Run the command 'python client_tcp.py'.
+
+### ClientCommands
+- **%connect**: This connects the user to the server through a given hostport and username. (example: "%connect localhost:8888 Grant")
+- **%exit**: This disconnects the user from the server they have connected to. (example: "%exit")
+- **%join**: Once connected to the server, this allows the user to join the public group. (example: "%join")
+- **%users**: Once connected to the server, this allows the user to see all the other users on the server. (example: "%users")
+- **%post**: Once connected to the server, this allows the user to post a subject and message to the public group. (example: "%post subject 'this is the message'")
+- **%message**: Once connected to the server, this allows the user to retrieve a post from the public group based on the message id. (example: "%message 0")
+- **%leave**: Once connected to the server and joined in the public group, this allows the user to leave the public group. (example: "%leave")
+- **%groups**: Once connected to the server, this allows the user to see all the other groups available to join. (example: "%groups")
+- **%groupjoin**: Once connected to the server, this allows the user to join any available group. (example: "%groupjoin python")
+- **%groupusers**: Once connected to the server, this allows the user to see all the other users on the specified group. (example: "%groupusers python")
+- **%grouppost**: Once connected to the server, this allows the user to post a subject and message to the specified group. (example: "%grouppost python python_subject 'this is the python message'")
+- **%groupmessage**: Once connected to the server, this allows the user to retrieve a post from the specified group based on the message id. (example: "%groupmessage python 0")
+- **%groupleave**: Once connected to the server and joined in a group, this allows the user to leave the group specified. (example: "%groupleave python")
+
+Notes:
+- The server has these commands implemented correctly with the given parameters; although, not a lot of error handling has been done for incorrect commands or their parameters. (spell check and parameter check before sending)
+## Not Implemented
+1. The %post commands doesn't update all the clients who are connected to the group that a user posted on, but all the posts are received correctly and saved correctly within the group for %message retrieval.
+2. The %join commands don't update all the clients who are connected to the group with 'user _ has joined the group'.
+3. The %leave commands don't update all the clients who are connected to the group with 'user _ has left the group'.
