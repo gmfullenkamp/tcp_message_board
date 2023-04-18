@@ -8,6 +8,7 @@ group_list = []
 
 user_list = []
 
+message_list = []
 
 class Group:
     def __init__(self, name):
@@ -100,7 +101,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     continue
                 
                 elif b'%post' == message.split(b' ')[0]:  # TODO: Post command
-                    notified_socket.sendall(b'%post command is not implemented.')
+                    #notified_socket.sendall(b'%post command is not implemented.')
+                    for key in clients:
+                        notified_socket = key
+                        notified_socket.sendall(message)
+                    continue
                     
                 elif b'%users' == message.split(b' ')[0]:
                     send_string = 'List of connected users: \n'
