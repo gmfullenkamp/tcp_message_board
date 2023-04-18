@@ -32,6 +32,6 @@ Notes:
 Notes:
 - The server has these commands implemented correctly with the given parameters; although, not a lot of error handling has been done for incorrect commands or their parameters. (spell check and parameter check before sending)
 ## Not Implemented
-1. The %post commands doesn't update all the clients who are connected to the group that a user posted on, but all the posts are received correctly and saved correctly within the group for %message retrieval.
+1. The %post commands don't update all the clients who are connected to the group that a user posted on, but all the posts are received correctly and saved correctly within the group for %message retrieval.
 2. The %join commands don't update all the clients who are connected to the group with 'user _ has joined the group'.
 3. The %leave commands don't update all the clients who are connected to the group with 'user _ has left the group'.

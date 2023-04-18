@@ -80,7 +80,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                     user_list.append(User(message.decode(), clients[notified_socket][1]))
                     print(user_list[-1].name, user_list[-1].port_number)
                     first = False
-                    notified_socket.sendall(message + b' is connected.')
+                    notified_socket.sendall(message + b' is connected.' + b'\n')
                     
                 elif b'%exit' == message.split(b' ')[0]:  # Exit command removes the client
                     print(f'Client exiting: {clients[notified_socket][0]}:{clients[notified_socket][1]}')
@@ -88,7 +88,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                         if user.port_number == clients[notified_socket][1]:
                             break
                     user_list.remove(user)
-                    notified_socket.sendall(b'Disconnected from server.')
+                    notified_socket.sendall(b'Disconnected from server.' + b'\n')
                     sockets_list.remove(notified_socket)
                     del clients[notified_socket]
                     continue
@@ -102,10 +102,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                                 user.group = 'public'
                                 break
                             else:
-                                notified_socket.sendall(b'User is already in public')
+                                notified_socket.sendall(b'User is already in public.' + b'\n')
                                 continue
                             
-                    notified_socket.sendall(b'User added to public')
+                    notified_socket.sendall(b'User added to public.' + b'\n')
                     continue
                 
                 elif b'%post' == message.split(b' ')[0]:  # TODO: Post command
@@ -143,9 +143,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                                 user.group = None
                                 break
                             else:
-                                notified_socket.sendall(b'User is not in public')
+                                notified_socket.sendall(b'User is not in public.' + b'\n')
                                 continue
-                    notified_socket.sendall(b'User removed from public')
+                    notified_socket.sendall(b'User removed from public.' + b'\n')
                     continue
                 
                 elif b'%message' == message.split(b' ')[0]:
@@ -176,10 +176,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                                         break
                                     else:
                                         print(group.users)
-                                        notified_socket.sendall(b'User is already in ' + group.name.encode())
+                                        notified_socket.sendall(b'User is already in ' + group.name.encode() + b'\n')
                                         continue
                                     
-                    notified_socket.sendall(b'User added to ' + group.name.encode())
+                    notified_socket.sendall(b'User added to ' + group.name.encode() + b'\n')
                     continue
                 
                 elif b'%grouppost' == message.split(b' ')[0]:  # TODO: Grouppost command
@@ -223,10 +223,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                                         user.group = None
                                         break
                                     else:
-                                        notified_socket.sendall(b'User is not in ' + group.name.encode())
+                                        notified_socket.sendall(b'User is not in ' + group.name.encode() + b'\n')
                                         continue
                                     
-                    notified_socket.sendall(b'User removed from ' + group.name.encode())
+                    notified_socket.sendall(b'User removed from ' + group.name.encode() + b'\n')
                     continue
                 
                 elif b'%groupmessage' == message.split(b' ')[0]:
@@ -243,5 +243,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                                             f"Subject: {message_data['subject']}\n"
                                             f"Message: {message_data['message']}\n".encode())
                     
-                else:  # TODO: Make else error handling, possible print all commands and functions?
-                    notified_socket.sendall(message)
+                else:
+                    notified_socket.sendall(b"Error: command not found. Try again.")
