@@ -3,3 +3,4 @@ Implement %grouppost.
 Implement %message.
 Implement %groupmessage.
 Update users when a person leaves a group.
+Update readme.
