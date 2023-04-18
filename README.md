@@ -34,4 +34,5 @@ Notes:
 ## Not Implemented
 1. The %post commands don't update all the clients who are connected to the group that a user posted on, but all the posts are received correctly and saved correctly within the group for %message retrieval.
 2. The %join commands don't update all the clients who are connected to the group with 'user _ has joined the group'.
-3. The %leave commands don't update all the clients who are connected to the group with 'user _ has left the group'.
+3. The %join commands don't update the client with the two most recent posts.
+4. The %leave commands don't update all the clients who are connected to the group with 'user _ has left the group'.
